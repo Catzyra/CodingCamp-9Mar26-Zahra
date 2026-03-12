@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A productivity dashboard with greeting display, focus timer, task list, and quick links manager">
+    <title>Productivity Dashboard</title>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/greeting.css">
+    <link rel="stylesheet" href="styles/timer.css">
+    <link rel="stylesheet" href="styles/tasks.css">
+    <link rel="stylesheet" href="styles/links.css">
+</head>
+<body>
+    <main class="dashboard">
+        <!-- Greeting Display Component -->
+        <section class="greeting-section" aria-label="Greeting and time display">
+            <div class="greeting-container">
+                <div class="time" aria-live="polite">12:00 PM</div>
+                <div class="date" aria-live="polite">Monday, January 1</div>
+                <div class="greeting" aria-live="polite">Good Afternoon</div>
+            </div>
+        </section>
+
+        <!-- Focus Timer Component -->
+        <section class="timer-section" aria-label="Focus timer">
+            <div class="timer-container">
+                <div class="timer-display" aria-live="polite" aria-atomic="true">25:00</div>
+                <div class="timer-controls">
+                    <button class="btn-start" aria-label="Start timer">Start</button>
+                    <button class="btn-stop" aria-label="Stop timer">Stop</button>
+                    <button class="btn-reset" aria-label="Reset timer">Reset</button>
+                </div>
+                <div class="timer-settings">
+                    <label for="duration-input">Duration (minutes):</label>
+                    <input type="number" id="duration-input" class="duration-input" min="1" max="120" aria-label="Timer duration in minutes" />
+                    <button class="btn-set-duration" aria-label="Set custom duration">Set Duration</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Task List Component -->
+        <section class="tasks-section" aria-label="Task list">
+            <div class="tasks-container">
+                <h2>Tasks</h2>
+                <div class="task-input-section">
+                    <label for="task-input" class="visually-hidden">New task</label>
+                    <input type="text" id="task-input" class="task-input" placeholder="Add a new task..." maxlength="500" />
+                    <button class="btn-add-task" aria-label="Add task">Add</button>
+                </div>
+                <div class="task-sort-controls">
+                    <button class="btn-sort-alpha" aria-label="Sort tasks alphabetically">A-Z</button>
+                    <button class="btn-sort-status" aria-label="Sort tasks by completion status">By Status</button>
+                </div>
+                <ul class="task-list" role="list" aria-label="Task items">
+                    <!-- Task items will be rendered here dynamically -->
+                </ul>
+                <div class="task-notification" role="alert" aria-live="polite"></div>
+            </div>
+        </section>
+
+        <!-- Quick Links Component -->
+        <section class="links-section" aria-label="Quick links manager">
+            <div class="links-container">
+                <h2>Quick Links</h2>
+                <div class="link-input-section">
+                    <label for="link-name-input" class="visually-hidden">Link name</label>
+                    <input type="text" id="link-name-input" class="link-name-input" placeholder="Site name..." maxlength="50" />
+                    <label for="link-url-input" class="visually-hidden">Link URL</label>
+                    <input type="url" id="link-url-input" class="link-url-input" placeholder="https://..." />
+                    <button class="btn-add-link" aria-label="Add link">Add Link</button>
+                </div>
+                <div class="links-grid" role="list" aria-label="Quick link items">
+                    <!-- Link buttons will be rendered here dynamically -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- JavaScript Files -->
+    <script src="scripts/storage.js"></script>
+    <script src="scripts/greeting.js"></script>
+    <script src="scripts/timer.js"></script>
+    <script src="scripts/tasks.js"></script>
+    <script src="scripts/links.js"></script>
+    <script src="scripts/main.js"></script>
+</body>
+</html>

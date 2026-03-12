@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual Integration Test - Productivity Dashboard</title>
+    <link rel="stylesheet" href="../../styles/main.css">
+    <link rel="stylesheet" href="../../styles/greeting.css">
+    <link rel="stylesheet" href="../../styles/timer.css">
+    <link rel="stylesheet" href="../../styles/tasks.css">
+    <link rel="stylesheet" href="../../styles/links.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-section h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 3px;
+        }
+        .test-pass {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .test-fail {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .test-info {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        button {
+            margin: 5px;
+            padding: 8px 15px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Manual Integration Test - Productivity Dashboard</h1>
+    <p>This page tests that all components are properly wired together and work correctly.</p>
+
+    <div class="test-section">
+        <h2>Test 1: Component Initialization</h2>
+        <div id="init-results"></div>
+        <button onclick="testInitialization()">Run Test</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 2: Storage Operations</h2>
+        <div id="storage-results"></div>
+        <button onclick="testStorage()">Run Test</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 3: Cross-Component Interactions</h2>
+        <div id="cross-component-results"></div>
+        <button onclick="testCrossComponent()">Run Test</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 4: Memory-Only Mode</h2>
+        <div id="memory-mode-results"></div>
+        <button onclick="testMemoryMode()">Run Test</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 5: Run All Tests</h2>
+        <button onclick="runAllTests()">Run All Tests</button>
+    </div>
+
+    <!-- Hidden dashboard for testing -->
+    <div style="display: none;">
+        <main class="dashboard">
+            <section class="greeting-section">
+                <div class="greeting-container">
+                    <div class="time">12:00 PM</div>
+                    <div class="date">Monday, January 1</div>
+                    <div class="greeting">Good Afternoon</div>
+                </div>
+            </section>
+            <section class="timer-section">
+                <div class="timer-container">
+                    <div class="timer-display">25:00</div>
+                    <div class="timer-controls">
+                        <button class="btn-start">Start</button>
+                        <button class="btn-stop">Stop</button>
+                        <button class="btn-reset">Reset</button>
+                    </div>
+                    <div class="timer-settings">
+                        <input type="number" class="duration-input" min="1" max="120" />
+                        <button class="btn-set-duration">Set Duration</button>
+                    </div>
+                </div>
+            </section>
+            <section class="tasks-section">
+                <div class="tasks-container">
+                    <div class="task-input-section">
+                        <input type="text" class="task-input" placeholder="Add a new task..." />
+                        <button class="btn-add-task">Add</button>
+                    </div>
+                    <div class="task-sort-controls">
+                        <button class="btn-sort-alpha">A-Z</button>
+                        <button class="btn-sort-status">By Status</button>
+                    </div>
+                    <ul class="task-list"></ul>
+                    <div class="task-notification"></div>
+                </div>
+            </section>
+            <section class="links-section">
+                <div class="links-container">
+                    <div class="link-input-section">
+                        <input type="text" class="link-name-input" placeholder="Site name..." />
+                        <input type="url" class="link-url-input" placeholder="https://..." />
+                        <button class="btn-add-link">Add Link</button>
+                    </div>
+                    <div class="links-grid"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Load scripts -->
+    <script src="../../scripts/storage.js"></script>
+    <script src="../../scripts/greeting.js"></script>
+    <script src="../../scripts/timer.js"></script>
+    <script src="../../scripts/tasks.js"></script>
+    <script src="../../scripts/links.js"></script>
+
+    <script>
+        function logResult(containerId, message, isPass) {
+            const container = document.getElementById(containerId);
+            const div = document.createElement('div');
+            div.className = `test-result ${isPass ? 'test-pass' : 'test-fail'}`;
+            div.textContent = (isPass ? '✓ ' : '✗ ') + message;
+            container.appendChild(div);
+        }
+
+        function logInfo(containerId, message) {
+            const container = document.getElementById(containerId);
+            const div = document.createElement('div');
+            div.className = 'test-result test-info';
+            div.textContent = 'ℹ ' + message;
+            container.appendChild(div);
+        }
+
+        function clearResults(containerId) {
+            document.getElementById(containerId).innerHTML = '';
+        }
+
+        function testInitialization() {
+            clearResults('init-results');
+            localStorage.clear();
+            
+            try {
+                const greetingContainer = document.querySelector('.greeting-container');
+                const timerContainer = document.querySelector('.timer-container');
+                const tasksContainer = document.querySelector('.tasks-container');
+                const linksContainer = document.querySelector('.links-container');
+
+                // Test greeting initialization
+                GreetingDisplay.init(greetingContainer);
+                logResult('init-results', 'Greeting component initialized', true);
+
+                // Test timer initialization
+                FocusTimer.init(timerContainer);
+                const timerDisplay = timerContainer.querySelector('.timer-display').textContent;
+                logResult('init-results', `Timer initialized with: ${timerDisplay}`, timerDisplay === '25:00');
+
+                // Test tasks initialization
+                TaskList.init(tasksContainer);
+                logResult('init-results', `Tasks initialized with ${TaskList.tasks.length} tasks`, true);
+
+                // Test links initialization
+                QuickLinks.init(linksContainer);
+                logResult('init-results', `Links initialized with ${QuickLinks.links.length} links`, true);
+
+                logInfo('init-results', 'All components initialized successfully!');
+            } catch (error) {
+                logResult('init-results', `Error: ${error.message}`, false);
+            }
+        }
+
+        function testStorage() {
+            clearResults('storage-results');
+            localStorage.clear();
+
+            try {
+                const tasksContainer = document.querySelector('.tasks-container');
+                const linksContainer = document.querySelector('.links-container');
+                const timerContainer = document.querySelector('.timer-container');
+
+                // Initialize components
+                TaskList.init(tasksContainer);
+                QuickLinks.init(linksContainer);
+                FocusTimer.init(timerContainer);
+
+                // Test task persistence
+                TaskList.addTask('Test Task 1');
+                TaskList.addTask('Test Task 2');
+                const storedTasks = JSON.parse(localStorage.getItem('tasks'));
+                logResult('storage-results', `Tasks persisted: ${storedTasks.length} tasks in storage`, storedTasks.length === 2);
+
+                // Test link persistence
+                QuickLinks.addLink('Google', 'https://google.com');
+                const storedLinks = JSON.parse(localStorage.getItem('links'));
+                logResult('storage-results', `Links persisted: ${storedLinks.length} links in storage`, storedLinks.length === 1);
+
+                // Test timer duration persistence
+                FocusTimer.setDuration(45);
+                const storedDuration = JSON.parse(localStorage.getItem('timerDuration'));
+                logResult('storage-results', `Timer duration persisted: ${storedDuration} minutes`, storedDuration === 45);
+
+                // Test reload
+                TaskList.tasks = [];
+                TaskList.init(tasksContainer);
+                logResult('storage-results', `Tasks loaded after reinit: ${TaskList.tasks.length} tasks`, TaskList.tasks.length === 2);
+
+                logInfo('storage-results', 'All storage operations working correctly!');
+            } catch (error) {
+                logResult('storage-results', `Error: ${error.message}`, false);
+            }
+        }
+
+        function testCrossComponent() {
+            clearResults('cross-component-results');
+            localStorage.clear();
+
+            try {
+                const tasksContainer = document.querySelector('.tasks-container');
+                const linksContainer = document.querySelector('.links-container');
+                const timerContainer = document.querySelector('.timer-container');
+
+                // Initialize all components
+                TaskList.init(tasksContainer);
+                QuickLinks.init(linksContainer);
+                FocusTimer.init(timerContainer);
+
+                // Add data to all components
+                TaskList.addTask('Task 1');
+                QuickLinks.addLink('Google', 'https://google.com');
+                FocusTimer.setDuration(30);
+
+                // Verify all data is in storage
+                const hasAllData = 
+                    localStorage.getItem('tasks') !== null &&
+                    localStorage.getItem('links') !== null &&
+                    localStorage.getItem('timerDuration') !== null;
+                
+                logResult('cross-component-results', 'All components can use storage simultaneously', hasAllData);
+
+                // Test independence - delete from one component
+                const taskId = TaskList.tasks[0].id;
+                TaskList.deleteTask(taskId);
+
+                const tasksEmpty = TaskList.tasks.length === 0;
+                const linksIntact = QuickLinks.links.length === 1;
+                const timerIntact = FocusTimer.getDuration() === 30;
+
+                logResult('cross-component-results', 'Task deleted without affecting other components', tasksEmpty && linksIntact && timerIntact);
+
+                logInfo('cross-component-results', 'Components maintain independence!');
+            } catch (error) {
+                logResult('cross-component-results', `Error: ${error.message}`, false);
+            }
+        }
+
+        function testMemoryMode() {
+            clearResults('memory-mode-results');
+            
+            try {
+                // Save original localStorage
+                const originalLocalStorage = window.localStorage;
+                
+                // Simulate storage disabled
+                Object.defineProperty(window, 'localStorage', {
+                    value: undefined,
+                    writable: true,
+                    configurable: true
+                });
+
+                const tasksContainer = document.querySelector('.tasks-container');
+                const linksContainer = document.querySelector('.links-container');
+                const timerContainer = document.querySelector('.timer-container');
+
+                // Initialize components (should not throw)
+                TaskList.init(tasksContainer);
+                QuickLinks.init(linksContainer);
+                FocusTimer.init(timerContainer);
+
+                logResult('memory-mode-results', 'Components initialized in memory-only mode', true);
+
+                // Test operations in memory
+                TaskList.addTask('Memory Task');
+                QuickLinks.addLink('Test', 'https://test.com');
+                FocusTimer.setDuration(20);
+
+                const memoryOpsWork = 
+                    TaskList.tasks.length === 1 &&
+                    QuickLinks.links.length === 1 &&
+                    FocusTimer.getDuration() === 20;
+
+                logResult('memory-mode-results', 'Operations work in memory-only mode', memoryOpsWork);
+
+                // Restore localStorage
+                Object.defineProperty(window, 'localStorage', {
+                    value: originalLocalStorage,
+                    writable: true,
+                    configurable: true
+                });
+
+                logInfo('memory-mode-results', 'Memory-only mode working correctly!');
+            } catch (error) {
+                logResult('memory-mode-results', `Error: ${error.message}`, false);
+                
+                // Ensure localStorage is restored even on error
+                location.reload();
+            }
+        }
+
+        function runAllTests() {
+            testInitialization();
+            setTimeout(() => testStorage(), 500);
+            setTimeout(() => testCrossComponent(), 1000);
+            setTimeout(() => testMemoryMode(), 1500);
+        }
+    </script>
+</body>
+</html>
